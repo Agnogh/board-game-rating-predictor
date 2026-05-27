@@ -32,3 +32,16 @@ The project will use board game data to investigate how features such as player 
 ## Project Status
 
 This project is currently in the initial setup stage.
+
+
+## Dataset Source
+
+The dataset used in this project is the **Board Games** dataset from Kaggle.
+
+- Dataset name: Board Games
+- Dataset author: Andrew MVD
+- Source platfrom: Kaggle
+- Original file used: `bgg_dataset.csv`
+- Dataset description: Data on approximately 20,000 board games scraped from BoardGameGeek.
+- Dataset location in this project: `data/raw/bgg_dataset.csv`
+- Dataset URL: https://www.kaggle.com/datasets/andrewmvd/board-games
