@@ -1,0 +1,11 @@
+Step,Decision,Reson
+Target selection,Use Rating Average as the prediction target.,Rating Average is the value the model will learn to predict.
+Excluded columns,"Exculed ID, Name, BGG Rank, Users Rated, and Owned Users.","These columns are identifiers, text labels, ranking information, or post-release popularity signals that could cause leakage or memorisation."
+Numerical features,Use selected board game design and attribute columns as numerical inputs.,These columns describe board game properties avaliable before or during game evaluation.
+Skewed numercal features,Use log-transformed versions of Max Players and Play Time.,"Max Players and Play Time were heavily right-skewed, so log transformation reduces the influence of extreme values."
+Missing numerical values,Create missing-value indicator columns for numerical features with missing values.,"Missingness itself may contain useful information, wile actual missing values are imputed later."
+Mechanics features,Create binary indicator features for the 15 most common non-unknown mechanics.,"Mechanics are multi-value text fields, so indicator features convert them into model-friendly numeric columns."
+Domains features,Create binary indicator features for all available non-unknown domains.,Domains are multi-value tetx fields and teher are only a small number of available domain categories.
+Train/test split,Split the data into 80% training and 20% testing using random_state=42.,The test set is kept separate so future model performance can be evaluated on unseen data.
+Imputation strategy,Fill missing feature values using median values learned from the training set only.,Learning imputation values from the training set only avoids leaking information from the test set.
+Saved modelling files,"Save prepared training/testing feature and target files, feature names, and imputation summary.",Saving prepared files allows future modelling notebooks to load the prepared data directly.
