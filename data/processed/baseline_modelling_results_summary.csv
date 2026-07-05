@@ -1,0 +1,9 @@
+Result Area,Summary,Explanation
+Best initial model,Linear Regression,"Linear Regression had the lowest test MAE, lowest test RMSE, and highest test R2 among the initial models."
+Dummy baseline purpose,Mean rating prediction,The dummy baseline predicts the training-set average rating for every board game and provides a minimum comparison point.
+Linear Regression test MAE,0.5707,"On average, Linear Regression predictions were about this many rating points away from the true test ratings."
+Linear Regression test RMSE,0.7507,"RMSE gives stronger penalty to larger errors, so this helps show whether the model makes large mistakes."
+Linear Regression test R2,0.3618,The Linear Regression model explained part of the variation in test-set board game ratings.
+MAE improvement over baseline,21.58%,Linear Regression reduced test MAE compared with the dummy baseline.
+RMSE improvement over baseline,20.11%,Linear Regression reduced test RMSE compared with the dummy baseline.
+Next modelling direction,Try more flexible models,"Linear Regression beat the baseline, but future models may capture non-linear relationships and improve performance further."
