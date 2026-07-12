@@ -1,0 +1,2 @@
+Best Model,Test MAE,Test RMSE,Test R2,Model File,Number of Features,Selection Reason
+Random Forest,0.4911510570047631,0.6649429553038372,0.4993247012615084,models\random_forest_rating_model.joblib,35,"Random Forest had the best test-set MAE, RMSE, and R2 among the models compared."
