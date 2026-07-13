@@ -1,0 +1,10 @@
+Section,Details
+Selected Model,Random Forest
+Selection Reason,"Random Forest had the best test-set MAE, RMSE, and R2 among the models compared."
+Test MAE,0.4912
+Test RMSE,0.6649
+Test R2,0.4993
+Improvement Over Linear Regression,Random Forest reduced test MAE by 0.0796 (13.94%) and reduced test RMSE by 0.0858 (11.43%).
+Most Important Features,"Complexity Average, Year Published, Play Time Log, Max Players Log, Min Age"
+Important Limitation,"Random Forest had a noticeable train/test performance gap, which suggests some overfitting should be considered."
+Deployment Note,The trained joblib model file is generated locally and ignored by Git because the uncompressed file exceeds GitHub's normal file size limit. A smaller or compressed deployment-friendly model artifact should be created before deployment.
