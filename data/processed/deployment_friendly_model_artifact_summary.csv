@@ -1,0 +1,2 @@
+Selected Deployment Model,Model File,Test MAE,Test RMSE,Test R2,File Size MB,GitHub File Size Limit MB,Under GitHub Limit,Number of Features,Selection Reason
+Compressed Random Forest,models\compressed_random_forest_rating_model.joblib,0.4911510570047631,0.6649429553038372,0.4993247012615084,27.314017295837402,100,True,35,Joblib compression reduced the Random Forest model file below GitHub's normal 100 MB limit while preserving the same test-set performance.

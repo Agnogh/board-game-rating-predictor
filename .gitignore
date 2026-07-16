@@ -217,3 +217,4 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 models/*.joblib
+!models/compressed_random_forest_rating_model.joblib
