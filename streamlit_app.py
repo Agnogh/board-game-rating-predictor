@@ -123,8 +123,8 @@ st.write(
 
 # App status message
 st.info(
-    "This version of the app converts board game inputs into model features. "
-    "Prediction will be added in a later step."
+    "This version of the app converts board game inputs into model features "
+    "and displays a predicted average rating."
 )
 
 
@@ -204,8 +204,8 @@ st.header("Board Game Input Form")
 
 st.write(
     "Enter basic board game information below. "
-    "For this step, the app collects inputs and converts them into the "
-    "same feature format used during model training."
+    "The app will convert the inputs into the same feature format used during "
+    "model training, then display a predicted rating."
 )
 
 with st.form("board_game_input_form"):
@@ -275,13 +275,13 @@ with st.form("board_game_input_form"):
         options=domain_options
     )
 
-    submitted = st.form_submit_button("Convert Input to Model Features")
+    submitted = st.form_submit_button("Predict Rating")
 
 
 if min_players > max_players:
     st.warning(
         "Minimum players is greater than maximum players. "
-        "Please adjust the player counts before prediction is added."
+        "Please adjust the player counts before making a prediction."
     )
 
 
@@ -316,8 +316,6 @@ if submitted:
     feature_order_matches = model_input.columns.tolist() == feature_names
     feature_count_matches = model_input.shape[1] == model.n_features_in_
 
-    st.success("Input converted into model feature format successfully.")
-
     st.subheader("User Input Preview")
 
     st.dataframe(
@@ -334,6 +332,30 @@ if submitted:
     }
 
     st.json(conversion_details)
+
+    if not feature_order_matches or not feature_count_matches:
+        st.error(
+            "The converted input does not match the model's expected feature "
+            "structure, so the app will not make a prediction."
+        )
+        st.stop()
+
+    prediction = model.predict(model_input)[0]
+
+    st.success("Prediction created successfully.")
+
+    st.header("Predicted Board Game Rating")
+
+    st.metric(
+        label="Predicted Average Rating",
+        value=f"{prediction:.2f} / 10"
+    )
+
+    st.write(
+        "This is the model's estimated average rating for a board game with "
+        "the selected features. It should be treated as a prediction, not as "
+        "a guaranteed real-world rating."
+    )
 
     st.subheader("Converted Model Feature Values")
 
@@ -354,13 +376,6 @@ if submitted:
         width="stretch"
     )
 
-    st.info(
-        "This confirms that the app can convert form inputs into the exact "
-        "feature structure expected by the model. The next step will use this "
-        "converted feature row to make a prediction."
-    )
-
-
 # Add a simple project overview section.
 st.header("Project Overview")
 
@@ -375,6 +390,6 @@ st.write(
 st.header("Next Steps")
 
 st.write(
-    "Next, this app will use the converted 35-feature model "
-    "input row to display a predicted board game rating."
+    "Next, this app can be polished with clearer layout, explanatory text, "
+    "and optional deployment instructions."
 )
