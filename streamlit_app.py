@@ -1,7 +1,8 @@
-# Import tools for file paths, model loading, data loading and web app
+# Import tools for file paths, model loading, data loading, math, and web app
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -57,6 +58,58 @@ def load_deployment_summary(summary_path):
     return pd.read_csv(summary_path)
 
 
+def create_model_input(
+    feature_names,
+    year_published,
+    min_players,
+    max_players,
+    play_time,
+    min_age,
+    complexity_average,
+    selected_mechanics,
+    selected_domains
+):
+    """Convert user-friendly app inputs into the model's feature format."""
+
+    model_input = pd.DataFrame(
+        data=0.0,
+        index=[0],
+        columns=feature_names
+    )
+
+    if "Year Published" in model_input.columns:
+        model_input.loc[0, "Year Published"] = year_published
+
+    if "Min Players" in model_input.columns:
+        model_input.loc[0, "Min Players"] = min_players
+
+    if "Min Age" in model_input.columns:
+        model_input.loc[0, "Min Age"] = min_age
+
+    if "Complexity Average" in model_input.columns:
+        model_input.loc[0, "Complexity Average"] = complexity_average
+
+    if "Max Players Log" in model_input.columns:
+        model_input.loc[0, "Max Players Log"] = np.log1p(max_players)
+
+    if "Play Time Log" in model_input.columns:
+        model_input.loc[0, "Play Time Log"] = np.log1p(play_time)
+
+    for mechanic in selected_mechanics:
+        mechanic_feature_name = f"Mechanic: {mechanic}"
+
+        if mechanic_feature_name in model_input.columns:
+            model_input.loc[0, mechanic_feature_name] = 1.0
+
+    for domain in selected_domains:
+        domain_feature_name = f"Domain: {domain}"
+
+        if domain_feature_name in model_input.columns:
+            model_input.loc[0, domain_feature_name] = 1.0
+
+    return model_input
+
+
 # Main page title
 st.title("🎲 Board Game Rating Predictor")
 
@@ -70,8 +123,8 @@ st.write(
 
 # App status message
 st.info(
-    "This version of the app collects board game inputs. "
-    "Feature conversion and prediction will be added in later steps."
+    "This version of the app converts board game inputs into model features. "
+    "Prediction will be added in a later step."
 )
 
 
@@ -124,7 +177,7 @@ st.subheader("Deployment Artifact Summary")
 
 st.dataframe(
     deployment_summary,
-    use_container_width=True
+    width="stretch"
 )
 
 
@@ -151,8 +204,8 @@ st.header("Board Game Input Form")
 
 st.write(
     "Enter basic board game information below. "
-    "For this step, the app only collects and previews the inputs. "
-    "Prediction will be added in a later step."
+    "For this step, the app collects inputs and converts them into the "
+    "same feature format used during model training."
 )
 
 with st.form("board_game_input_form"):
@@ -222,7 +275,7 @@ with st.form("board_game_input_form"):
         options=domain_options
     )
 
-    submitted = st.form_submit_button("Preview Input")
+    submitted = st.form_submit_button("Convert Input to Model Features")
 
 
 if min_players > max_players:
@@ -248,19 +301,63 @@ if submitted:
         ]
     )
 
-    st.success("Input collected successfully.")
+    model_input = create_model_input(
+        feature_names=feature_names,
+        year_published=year_published,
+        min_players=min_players,
+        max_players=max_players,
+        play_time=play_time,
+        min_age=min_age,
+        complexity_average=complexity_average,
+        selected_mechanics=selected_mechanics,
+        selected_domains=selected_domains
+    )
 
-    st.subheader("Input Preview")
+    feature_order_matches = model_input.columns.tolist() == feature_names
+    feature_count_matches = model_input.shape[1] == model.n_features_in_
+
+    st.success("Input converted into model feature format successfully.")
+
+    st.subheader("User Input Preview")
 
     st.dataframe(
         user_input_preview,
-        use_container_width=True
+        width="stretch"
+    )
+
+    st.subheader("Model Feature Conversion Check")
+
+    conversion_details = {
+        "Converted feature row shape": str(model_input.shape),
+        "Feature order matches saved feature names": feature_order_matches,
+        "Feature count matches model input features": feature_count_matches
+    }
+
+    st.json(conversion_details)
+
+    st.subheader("Converted Model Feature Values")
+
+    model_input_preview = (
+        model_input
+        .T
+        .reset_index()
+        .rename(
+            columns={
+                "index": "Feature",
+                0: "Value"
+            }
+        )
+    )
+
+    st.dataframe(
+        model_input_preview,
+        width="stretch"
     )
 
     st.info(
-        "This preview confirms that the app can collect user input. "
-        "The next step will convert these values into the exact model feature "
-        "format needed for prediction."
+        "This confirms that the app can convert form inputs into the exact "
+        "feature structure expected by the model. The next step will use this "
+        "converted feature row to make a prediction."
     )
 
 
@@ -278,6 +375,6 @@ st.write(
 st.header("Next Steps")
 
 st.write(
-    "Next, this app will convert user inputs into the same 35-feature format "
-    "used during training, then display a predicted board game rating. "
+    "Next, this app will use the converted 35-feature model "
+    "input row to display a predicted board game rating."
 )
