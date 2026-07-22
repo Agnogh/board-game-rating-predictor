@@ -110,27 +110,33 @@ def create_model_input(
     return model_input
 
 
+def format_selected_items(selected_items):
+    """Create clean display text for selected mechanics and domains."""
+
+    if selected_items:
+        return ", ".join(selected_items)
+
+    return "None selected"
+
+
 # Main page title
 st.title("🎲 Board Game Rating Predictor")
 
 
 # Short project introduction
 st.write(
-    "This app will use a trained machine-learning model to predict "
-    "a board game's average rating based on selected game features."
+    "Estimate a board game's average rating using a trained machine-learning "
+    "model based on BoardGameGeek-style game features."
 )
 
 
-# App status message
-st.info(
-    "This version of the app converts board game inputs into model features "
-    "and displays a predicted average rating."
+st.caption(
+    "Portfolio project: predictive analytics, feature engineering, model "
+    "selection, and Streamlit deployment."
 )
 
 
 # Load model assets
-st.header("Model Loading Check")
-
 required_files = {
     "Deployment model": MODEL_PATH,
     "Model feature names": FEATURE_NAMES_PATH,
@@ -156,30 +162,6 @@ model = load_model(MODEL_PATH)
 feature_names = load_feature_names(FEATURE_NAMES_PATH)
 deployment_summary = load_deployment_summary(DEPLOYMENT_SUMMARY_PATH)
 
-st.success("Deployment-friendly model loaded successfully.")
-
-
-# Show basic model information.
-st.subheader("Loaded Model Details")
-
-model_details = {
-    "Model file": str(MODEL_PATH.relative_to(PROJECT_ROOT)),
-    "Model type": type(model).__name__,
-    "Number of model input features": model.n_features_in_,
-    "Number of saved feature names": len(feature_names)
-}
-
-st.json(model_details)
-
-
-# Show deployment model summary.
-st.subheader("Deployment Artifact Summary")
-
-st.dataframe(
-    deployment_summary,
-    width="stretch"
-)
-
 
 # Build input options from saved feature names.
 mechanic_options = sorted(
@@ -199,13 +181,63 @@ domain_options = sorted(
 )
 
 
+# Sidebar project information
+# -> Sidebar + explanation for clarity
+with st.sidebar:
+    st.header("About this app")
+
+    st.write(
+        "This app uses a compressed Random Forest model trained on board game "
+        "data. The model estimates an average rating from design features such "
+        "as player count, play time, complexity, mechanics, and domain."
+    )
+
+    st.subheader("Current model")
+
+    st.write("Random Forest Regressor")
+
+    st.subheader("Model input")
+
+    st.write(f"{len(feature_names)} engineered features")
+
+    st.subheader("Important note")
+
+    st.write(
+        "The prediction is an estimate, not a guaranteed real-world rating. "
+        "Board game ratings can also depend on theme, art, reviews, marketing, "
+        "community attention, and other factors not fully captured here."
+    )
+
+
+# Model status section
+# -> model details move from top to inside
+with st.expander("Model loading and deployment details", expanded=False):
+    st.success("Deployment-friendly model loaded successfully.")
+
+    model_details = {
+        "Model file": str(MODEL_PATH.relative_to(PROJECT_ROOT)),
+        "Model type": type(model).__name__,
+        "Number of model input features": model.n_features_in_,
+        "Number of saved feature names": len(feature_names)
+    }
+
+    st.subheader("Loaded Model Details")
+    st.json(model_details)
+
+    st.subheader("Deployment Artifact Summary")
+    st.dataframe(
+        deployment_summary,
+        width="stretch"
+    )
+
+
 # Add the board game input form.
-st.header("Board Game Input Form")
+st.header("Enter Board Game Details")
 
 st.write(
-    "Enter basic board game information below. "
-    "The app will convert the inputs into the same feature format used during "
-    "model training, then display a predicted rating."
+    "Fill in the information below, then click **Predict Rating**. "
+    "The app will convert your inputs into the same feature format used during "
+    "model training and show the model's estimated rating."
 )
 
 with st.form("board_game_input_form"):
@@ -219,7 +251,8 @@ with st.form("board_game_input_form"):
             min_value=1800,
             max_value=2026,
             value=2020,
-            step=1
+            step=1,
+            help="The year the game was published."
         )
 
         min_players = st.number_input(
@@ -227,7 +260,8 @@ with st.form("board_game_input_form"):
             min_value=1,
             max_value=20,
             value=2,
-            step=1
+            step=1,
+            help="The smallest supported player count."
         )
 
         max_players = st.number_input(
@@ -235,7 +269,8 @@ with st.form("board_game_input_form"):
             min_value=1,
             max_value=100,
             value=4,
-            step=1
+            step=1,
+            help="The largest supported player count."
         )
 
     with col2:
@@ -244,7 +279,8 @@ with st.form("board_game_input_form"):
             min_value=1,
             max_value=600,
             value=60,
-            step=5
+            step=5,
+            help="Approxamate play time in minutes."
         )
 
         min_age = st.number_input(
@@ -252,7 +288,8 @@ with st.form("board_game_input_form"):
             min_value=0,
             max_value=21,
             value=10,
-            step=1
+            step=1,
+            help="Recommended minimum player age."
         )
 
         complexity_average = st.number_input(
@@ -260,19 +297,22 @@ with st.form("board_game_input_form"):
             min_value=1.0,
             max_value=5.0,
             value=2.5,
-            step=0.1
+            step=0.1,
+            help="A rough complexity/weight score from 1.0 to 5.0."
         )
 
     st.subheader("Game Categories")
 
     selected_mechanics = st.multiselect(
         "Select Mechanics",
-        options=mechanic_options
+        options=mechanic_options,
+        help="Choose one or more mechanics that describe the game."
     )
 
     selected_domains = st.multiselect(
         "Select Domains",
-        options=domain_options
+        options=domain_options,
+        help="Choose on or more broad board game categories."
     )
 
     submitted = st.form_submit_button("Predict Rating")
@@ -295,8 +335,8 @@ if submitted:
                 "Play Time": play_time,
                 "Minimum Age": min_age,
                 "Complexity Average": complexity_average,
-                "Selected Mechanics": ", ".join(selected_mechanics),
-                "Selected Domains": ", ".join(selected_domains)
+                "Selected Mechanics": format_selected_items(selected_mechanics),
+                "Selected Domains": format_selected_items(selected_domains)
             }
         ]
     )
@@ -316,23 +356,6 @@ if submitted:
     feature_order_matches = model_input.columns.tolist() == feature_names
     feature_count_matches = model_input.shape[1] == model.n_features_in_
 
-    st.subheader("User Input Preview")
-
-    st.dataframe(
-        user_input_preview,
-        width="stretch"
-    )
-
-    st.subheader("Model Feature Conversion Check")
-
-    conversion_details = {
-        "Converted feature row shape": str(model_input.shape),
-        "Feature order matches saved feature names": feature_order_matches,
-        "Feature count matches model input features": feature_count_matches
-    }
-
-    st.json(conversion_details)
-
     if not feature_order_matches or not feature_count_matches:
         st.error(
             "The converted input does not match the model's expected feature "
@@ -342,47 +365,86 @@ if submitted:
 
     prediction = model.predict(model_input)[0]
 
-    st.success("Prediction created successfully.")
-
+    st.divider()
+    # has its own section now
     st.header("Predicted Board Game Rating")
 
-    st.metric(
-        label="Predicted Average Rating",
-        value=f"{prediction:.2f} / 10"
-    )
-
-    st.write(
-        "This is the model's estimated average rating for a board game with "
-        "the selected features. It should be treated as a prediction, not as "
-        "a guaranteed real-world rating."
-    )
-
-    st.subheader("Converted Model Feature Values")
-
-    model_input_preview = (
-        model_input
-        .T
-        .reset_index()
-        .rename(
-            columns={
-                "index": "Feature",
-                0: "Value"
-            }
+    prediction_col, explanation_col = st.columns([1, 2])
+    # stands out important results
+    with prediction_col:
+        st.metric(
+            label="Predicted Average Rating",
+            value=f"{prediction:.2f} / 10"
         )
-    )
 
-    st.dataframe(
-        model_input_preview,
-        width="stretch"
-    )
+    with explanation_col:
+        st.write(
+            "This is the model's estimated average rating for a board game "
+            "with the selected features."
+        )
+
+        st.write(
+            "Use this as a directional prediction rather than a guaranteed "
+            "rating. The model is based on patterns in the training data."
+        )
+    # hiding (unless opened on purpose)
+    with st.expander("Show user input summary", expanded=False):
+        st.dataframe(
+            user_input_preview,
+            width="stretch"
+        )
+    # hiding (to improve clarity / UI)
+    with st.expander("Show model feature validation checks", expanded=False):
+        conversion_details = {
+            "Converted feature row shape": str(model_input.shape),
+            "Feature order matches saved feature names": feature_order_matches,
+            "Feature count matches model input features": feature_count_matches
+        }
+
+        st.json(conversion_details)
+    # hidden -> better UI
+    with st.expander("Show converted 35-feature model input", expanded=False):
+        model_input_preview = (
+            model_input
+            .T
+            .reset_index()
+            .rename(
+                columns={
+                    "index": "Feature",
+                    0: "Value"
+                }
+            )
+        )
+
+        st.dataframe(
+            model_input_preview,
+            width="stretch"
+        )
+
+
+st.divider()
+
 
 # Add a simple project overview section.
 st.header("Project Overview")
 
 st.write(
-    "The project uses BoardGameGeek-style board game data to train and "
-    "compare regression models. The current selected deployment artifact is "
-    "a compressed Random Forest model."
+    "This project follows a complete beginner-friendly machine-learning "
+    "workflow: data inspection, cleaning, exploratory analysis, feature "
+    "engineering, baseline modelling, model improvement, artifact preparation, "
+    "and Streamlit app development."
+)
+
+
+# Add a simple model limitation section
+st.header("Model Notes")
+
+st.write(
+    "The selected model is a compressed Random Forest Regressor. It performed "
+    "better than the baseline and linear regression models during testing, but "
+    "it still has limitations. The prediction should be interpreted as an "
+    "estimate based on available structured features, not as a final judgement "
+    "of a game's quality."
 )
 
 
@@ -390,6 +452,6 @@ st.write(
 st.header("Next Steps")
 
 st.write(
-    "Next, this app can be polished with clearer layout, explanatory text, "
-    "and optional deployment instructions."
+    "Next, the project can be prepared for deployment and documented clearly "
+    "in the README so that other people can understand and run the app."
 )
