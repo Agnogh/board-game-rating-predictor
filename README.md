@@ -9,8 +9,8 @@ The project includes data inspection, cleaning, exploratory data analysis, featu
 
 - [Project Overview](#project-overview)
 - [Project Goals](#project-goals)
-- [Dataset Source](#dataset-source)
 - [Technologies Used](#technologies-used)
+- [Dataset Source](#dataset-source)
 - [Project Structure](#project-structure)
 - [Machine-Learning Workflow](#machine-learning-workflow)
 - [Streamlit App](#streamlit-app)
@@ -44,7 +44,7 @@ The prediction is based on structured BoardGameGeek-style features, including:
 - Train and compare baseline and machine-learning models
 - Select a stronger model for prediction
 - Save a deployment-friendly model artifact
-- Create a Streamlit dashboard for presenting insights and predictions
+- Build a Streamlit app for interactive predictions
 - Document the project clearly for portfolio use
 
 
@@ -68,7 +68,7 @@ The dataset used in this project is the **Board Games** dataset from Kaggle.
 
 - Dataset name: Board Games
 - Dataset author: Andrew MVD
-- Source platfrom: Kaggle
+- Source platform: Kaggle
 - Original file used: `bgg_dataset.csv`
 - Dataset description: Data on approximately 20,000 board games scraped from BoardGameGeek.
 - Dataset location in this project: `data/raw/bgg_dataset.csv`
@@ -318,7 +318,7 @@ The project currently includes:
 - Completed deployment-friendly model artifact
 - Completed Streamlit prediction app
 - Completed deployment preparation
-- Documentation in progress
+- Completed README documentation
 
 ---
 
@@ -327,7 +327,7 @@ The project currently includes:
 Possible future improvements include:
 
 - Deploy the Streamlit app online
-- Add screenshots of the app to the README
+- Add a link to the deployed Streamlit app once available
 - Add feature-importance explanations to the app
 - Add example board game presets
 - Improve model performance through further tuning
