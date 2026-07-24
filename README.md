@@ -199,6 +199,18 @@ The project includes an interactive Streamlit app:
 streamlit_app.py
 ```
 
+### App Interface
+
+The Streamlit app provides a user-friendly form for entering board game details.
+
+![Streamlit app input form](images/streamlit_app_input_form.jpg)
+
+### Prediction Result
+
+After the user submits the form, the app displays the predicted average rating.
+
+![Streamlit app prediction result](images/streamlit_app_prediction_result.jpg)
+
 The app allows users to enter board game details, including:
 
 - Year published
