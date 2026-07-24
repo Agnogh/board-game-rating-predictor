@@ -5,6 +5,19 @@ Predictive analytics and machine-learning project that explores board game data 
 
 The project includes data inspection, cleaning, exploratory data analysis, feature engineering, baseline modelling, model improvement, deployment artifact preparation, and a Streamlit prediction app.
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Project Goals](#project-goals)
+- [Dataset Source](#dataset-source)
+- [Technologies Used](#technologies-used)
+- [Project Structure](#project-structure)
+- [Machine-Learning Workflow](#machine-learning-workflow)
+- [Streamlit App](#streamlit-app)
+- [How to Run the Project Locally](#how-to-run-the-project-locally)
+- [Model Limitations](#model-limitations)
+- [Current Project Status](#current-project-status)
+- [Next Steps](#next-steps)
 
 ## Project Overview
 
