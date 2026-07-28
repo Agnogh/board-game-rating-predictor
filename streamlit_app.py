@@ -280,7 +280,7 @@ with st.form("board_game_input_form"):
             max_value=600,
             value=60,
             step=5,
-            help="Approxamate play time in minutes."
+            help="Approximate play time in minutes."
         )
 
         min_age = st.number_input(
@@ -312,7 +312,7 @@ with st.form("board_game_input_form"):
     selected_domains = st.multiselect(
         "Select Domains",
         options=domain_options,
-        help="Choose on or more broad board game categories."
+        help="Choose one or more broad board game categories."
     )
 
     submitted = st.form_submit_button("Predict Rating")
