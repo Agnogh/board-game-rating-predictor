@@ -206,11 +206,9 @@ This compressed model artifact is small enough to be tracked in GitHub and used 
 
 ## Streamlit App
 
-The project includes an interactive Streamlit app:
+The project includes an interactive Streamlit app for predicting board game rating based on user-selected game characteristics.
 
-```text
-streamlit_app.py
-```
+**Live app:** [Board Game Rating Predictor](https://board-game-rating-predictor-by-agnogh.streamlit.app/)
 
 ### App Interface
 
@@ -317,7 +315,7 @@ The project currently includes:
 - Completed model improvement and selection
 - Completed deployment-friendly model artifact
 - Completed Streamlit prediction app
-- Completed deployment preparation
+- Completed online Streamlit deployment
 - Completed README documentation
 
 ---
@@ -326,8 +324,6 @@ The project currently includes:
 
 Possible future improvements include:
 
-- Deploy the Streamlit app online
-- Add a link to the deployed Streamlit app once available
 - Add feature-importance explanations to the app
 - Add example board game presets
 - Improve model performance through further tuning
