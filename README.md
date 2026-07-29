@@ -9,6 +9,12 @@ The project includes data inspection, cleaning, exploratory data analysis, featu
 
 - [Project Overview](#project-overview)
 - [Project Goals](#project-goals)
+- [Business Case](#business-case)
+- [Business Requirements](#business-requirements)
+- [Rationale: Mapping Business Requirements to Project Work](#rationale-mapping-business-requirements-to-project-work)
+- [ML Business Case](#ml-business-case)
+- [Project Hypotheses and Validation](#project-hypotheses-and-validation)
+- [Dashboard Design](#dashboard-design)
 - [Technologies Used](#technologies-used)
 - [Dataset Source](#dataset-source)
 - [Project Structure](#project-structure)
@@ -46,7 +52,158 @@ The prediction is based on structured BoardGameGeek-style features, including:
 - Save a deployment-friendly model artifact
 - Build a Streamlit app for interactive predictions
 - Document the project clearly for portfolio use
+- Map data analysis and machine-learning work to clear business requirements
+- Deploy the final prediction app online
 
+## Business Case
+
+This project is designed for a fictional board game designer, publisher, or product researcher who wants to explore how board game design characteristics relate to player reception.
+
+When developing a new board game idea, early design choices such as player count, play time, minimum age, complexity, mechanics, and game category can influence how the game may be received by players. Before investing more time into design, production, marketing, or publishing, the stakeholder wants to better understand patterns in existing board game data.
+
+The project uses historical BoardGameGeek-style data to support two practical goals:
+
+1. Explore which board game characteristics appear to be associated with higher or lower average ratings.
+2. Provide an interactive prediction app that estimates a board game's likely average rating from user-selected design features.
+
+The prediction should not be interpreted as a guaranteed commercial outcome. The dataset does not contain full sales data, marketing spend, production quality, artwork quality, or availability information. Instead, the predicted average rating is used as a proxy for likely player reception based on the structured features available in the dataset.
+
+## Business Requirements
+
+### Business Requirement 1: Data Analysis
+
+The stakeholder wants to understand which board game features are most related to average user rating.
+
+This requirement is answered through conventional data analysis and visual exploration, including:
+
+- Inspecting the dataset structure and target variable
+- Cleaning and preparing the dataset
+- Exploring the distribution of average ratings
+- Reviewing relationships between rating and numerical features
+- Exploring common mechanics and domains
+- Identifying which features show the strongest relationships with average rating
+
+### Business Requirement 2: Machine Learning Prediction
+
+The stakeholder wants an interactive tool that can estimate a board game's average rating from design features.
+
+This requirement is answered with a machine-learning regression model and a Streamlit app. The user can enter board game characteristics, and the app returns a predicted average rating.
+
+### User Stories
+
+As a board game designer, I want to explore how existing board game features relate to average ratings, so that I can make more informed design decisions.
+
+As a board game publisher or product researcher, I want to estimate the likely player reception of a board game concept, so that I can compare different design ideas before investing further resources.
+
+As a portfolio reviewer or technical stakeholder, I want to see a clear data cleaning, analysis, modelling, and deployment workflow, so that I can understand how the prediction system was built and evaluated.
+
+## Rationale: Mapping Business Requirements to Project Work
+
+| Business Requirement | Project Work | Output |
+| --- | --- | --- |
+| Understand how board game features relate to average rating | Data inspection, data cleaning, exploratory data analysis, correlation review, mechanics/domain analysis | EDA findings, charts, cleaned dataset, feature insights |
+| Predict a board game's likely average rating from design features | Feature engineering, train/test split, baseline modelling, Random Forest model training, model evaluation | Trained regression model, saved model artifact, model performance metrics |
+| Make the model usable by a non-technical user | Streamlit app design and deployment | Interactive web app with input form and prediction output |
+| Make the workflow understandable and reproducible | README documentation, notebooks, Git/GitHub version control | Documented project structure, workflow summary, local run instructions, live app link |
+
+## ML Business Case
+
+The machine-learning task is a supervised regression problem.
+
+The model predicts the target variable:
+
+```text
+Rating Average
+```
+
+The model input features are board game design characteristics prepared during feature engineering, including:
+
+- Year published
+- Minimum players
+- Maximum players
+- Play time
+- Minimum age
+- Complexity average
+- Selected mechanics
+- Selected domains/categories
+- Missing-value indicators
+- Log-transformed player-count and play-time features
+
+The intended output is a predicted average board game rating on the same approximate scale as the original dataset rating average.
+
+A successful model should perform better than a simple baseline model and provide useful directional estimates for comparing board game design ideas. In this project, a Dummy baseline model, Linear Regression model, and Random Forest Regressor were compared. The Random Forest model was selected because it achieved the strongest test performance among the models tested.
+
+Final selected model:
+
+```text
+Random Forest Regressor
+```
+
+Final test performance:
+
+```text
+MAE: 0.4912
+RMSE: 0.6649
+R²: 0.4993
+```
+
+The model is useful for exploring patterns in board game data, but it should not be treated as a guarantee of commercial success or final game quality.
+
+## Project Hypotheses and Validation
+
+### Hypothesis 1: More complex board games tend to receive higher average ratings.
+
+Validation approach:
+
+- The relationship between `Complexity Average` and `Rating Average` was explored during EDA.
+- `Complexity Average` showed the strongest positive correlation with the target among the numerical candidate features.
+- Random Forest feature importance also identified `Complexity Average` as the most important model feature.
+
+Conclusion:
+
+This hypothesis was supported by the available dataset. Complexity appears to be one of the strongest structured indicators associated with higher average ratings.
+
+### Hypothesis 2: Minimum recommended age is positively related to average rating.
+
+Validation approach:
+
+- The relationship between `Min Age` and `Rating Average` was reviewed during EDA.
+- `Min Age` showed a positive relationship with average rating.
+- `Min Age` was also among the more important features in the final Random Forest model.
+
+Conclusion:
+
+This hypothesis was partly supported. Games aimed at older audiences may receive higher average ratings, although age is likely acting as a proxy for other design factors such as complexity, strategy depth, and theme.
+
+### Hypothesis 3: Mechanics and domains contain useful predictive information.
+
+Validation approach:
+
+- The `Mechanics` and `Domains` columns were inspected during EDA.
+- Common mechanics and domains were converted into model-ready indicator features.
+- The final model used these engineered features alongside numerical features.
+
+Conclusion:
+
+This hypothesis was supported. Mechanics and domains added useful design-context information to the model, although numerical features such as complexity and year published had stronger overall importance in the final Random Forest model.
+
+## Dashboard Design
+
+The deployed Streamlit app is designed as a single-page interactive prediction dashboard.
+
+The dashboard includes:
+
+- A short project introduction
+- A sidebar summary explaining the app and model
+- Input widgets for board game design features
+- Multi-select widgets for mechanics and domains
+- A prediction button
+- A clear predicted average rating output
+- Expandable sections showing model details, selected inputs, validation checks, and the final 35-feature model input table
+
+The dashboard answers the machine-learning business requirement by allowing a user to enter board game details and receive a predicted average rating.
+
+The data-analysis business requirement is primarily answered in the project notebooks and summarized in the README. The app focuses on making the final trained model usable through an interactive interface.
 
 ## Technologies Used
 
